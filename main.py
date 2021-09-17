@@ -1,5 +1,7 @@
 import csv
 import os
+import glob
+from xlsxwriter.workbook import Workbook
 
 folder_name = input('Please enter the name of the folder you would like to save your file to\n : ')
 os.mkdir(folder_name)
@@ -28,3 +30,13 @@ with open('{}.csv'.format(file_name), 'w', newline='') as file:
             values = input('please enter a list of values for the row separated by a comma and a space\n : ')
             writer.writerow(convert(values))
             rowcount += 1
+
+for file in glob.glob(os.path.join('.', '*.csv')):
+    workbook = Workbook(file[:-4] + '.xlsx')
+    worksheet = workbook.add_worksheet()
+    with open(file, 'rt', encoding='utf8') as f:
+        reader = csv.reader(f)
+        for r, row in enumerate(reader):
+            for c, col in enumerate(row):
+                worksheet.write(r, c, col)
+    workbook.close()
